@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
+    'users.apps.UsersConfig',
     'exams.apps.ExamsConfig',
     'django.contrib.admin',
     'django.contrib.auth',

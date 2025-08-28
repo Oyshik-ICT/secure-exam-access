@@ -15,11 +15,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from exams.views import GenerateExamTokenAPIView, AccessExamView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("api/register/", include("users.urls.regi_urls")),
+    path("api/login/", include("users.urls.token_urls")),
+    path("api/user/", include("users.urls.user_urls")),
     path('api/exams/<int:exam_id>/generate-token/', GenerateExamTokenAPIView.as_view(), name="generate-token"),
     path('api/exams/access/<str:token>/', AccessExamView, name="access-exam-view")
 ]
