@@ -2,6 +2,8 @@ from ..models import Exam, ExamAccessToken
 from django.contrib.auth.models import User
 from django.utils import timezone
 import secrets
+from ..exceptions import TokenNotFound, TokenAlreadyUsedError, TokeExpiredError
+from django.db import transaction
 
 class ExamService:
     @staticmethod
@@ -35,4 +37,21 @@ class ExamService:
         )
 
         return token
+    
+    @staticmethod
+    def token_related_validation(token):
+        with transaction.atomic():
+            if not ExamAccessToken.objects.filter(token=token).exists():
+                raise TokenNotFound("Token doesn't exist")
+            
+            examAccessTokenObject = ExamAccessToken.objects.select_related("exam", "student").get(token=token)
+            now = timezone.now()
+            if examAccessTokenObject.is_used:
+                raise TokenAlreadyUsedError("Token is already used")
+            if not examAccessTokenObject.valid_from <= now < examAccessTokenObject.valid_until:
+                raise TokeExpiredError("Token is expired")
+            
+            examAccessTokenObject.is_used = True
+            examAccessTokenObject.save(update_fields=['is_used'])
+            return True, examAccessTokenObject
 

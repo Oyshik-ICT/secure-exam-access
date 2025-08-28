@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from exams.views import GenerateExamTokenAPIView
+from exams.views import GenerateExamTokenAPIView, AccessExamView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/exams/<int:exam_id>/generate-token/', GenerateExamTokenAPIView.as_view(), name="generate-token")
+    path('api/exams/<int:exam_id>/generate-token/', GenerateExamTokenAPIView.as_view(), name="generate-token"),
+    path('api/exams/access/<str:token>/', AccessExamView, name="access-exam-view")
 ]

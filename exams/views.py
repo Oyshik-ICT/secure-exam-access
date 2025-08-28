@@ -1,9 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
-from .serializers import GenerateExamTokenaSerializer
+from .serializers import GenerateExamTokenaSerializer, AccessExamSerializer
 from .services.exam_service import ExamService
 from rest_framework import status
+from rest_framework.decorators import api_view, throttle_classes
+from .models import ExamAccessToken
+from .exceptions import TokenNotFound, TokenAlreadyUsedError, TokeExpiredError
+from rest_framework.throttling import AnonRateThrottle
 
 class GenerateExamTokenAPIView(APIView):
     permission_classes = [IsAdminUser]
@@ -27,6 +31,32 @@ class GenerateExamTokenAPIView(APIView):
                 {"details": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+@api_view(['GET'])
+@throttle_classes([AnonRateThrottle])
+def AccessExamView(request, token):
+    try:
+        validate, tokenObj = ExamService.token_related_validation(token)
+        if validate:
+            serializer = AccessExamSerializer(tokenObj)
+            return Response(
+                serializer.data
+            )
+    except TokenNotFound as e:
+        return Response(
+            {"message": str(e)},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except TokenAlreadyUsedError as e:
+        return Response(
+            {"message": str(e)},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    except TokeExpiredError as e:
+        return Response(
+            {"message": str(e)},
+            status=status.HTTP_410_GONE
+        )
 
 
     
