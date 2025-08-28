@@ -36,7 +36,7 @@ class ExamService:
             valid_until = now + timezone.timedelta(minutes=valid_minutes)
         )
 
-        return token
+        return token, student
     
     @staticmethod
     def token_related_validation(token):

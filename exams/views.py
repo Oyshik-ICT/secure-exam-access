@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view, throttle_classes
 from .models import ExamAccessToken
 from .exceptions import TokenNotFound, TokenAlreadyUsedError, TokeExpiredError
 from rest_framework.throttling import AnonRateThrottle
+from .tasks import send_token
 
 class GenerateExamTokenAPIView(APIView):
     permission_classes = [IsAdminUser]
@@ -17,8 +18,8 @@ class GenerateExamTokenAPIView(APIView):
             serializer = GenerateExamTokenaSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             student_id, valid_minutes = request.data.get("student_id"), request.data.get("valid_minutes")
-            token = ExamService.generate_token(exam_id, student_id, valid_minutes)
-
+            token, student = ExamService.generate_token(exam_id, student_id, valid_minutes)
+            send_token.delay(token, student.email)
             return Response(
                 {
                     "token": token,
