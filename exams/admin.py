@@ -12,4 +12,7 @@ class ExamAdmin(admin.ModelAdmin):
     search_fields = ("title",)
 
 
-admin.site.register(ExamAccessToken)
+@admin.register(ExamAccessToken)
+class ExamAccessTokenAdmin(admin.ModelAdmin):
+    list_display = ("exam", "student", "is_used")
+    list_filter = ["is_used", "valid_until", "exam"]
