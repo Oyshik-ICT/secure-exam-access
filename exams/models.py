@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils import timezone
+
 
 class Exam(models.Model):
     title = models.CharField(max_length=255)
@@ -19,9 +20,14 @@ class Exam(models.Model):
     def __str__(self):
         return f"Exam name: {self.title}"
 
+
 class ExamAccessToken(models.Model):
-    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name="ExamAccessTokens")
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ExamAccessTokens")
+    exam = models.ForeignKey(
+        Exam, on_delete=models.CASCADE, related_name="ExamAccessTokens"
+    )
+    student = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="ExamAccessTokens"
+    )
     token = models.CharField(max_length=36, unique=True)
     is_used = models.BooleanField(default=False)
     valid_from = models.DateTimeField()
@@ -29,7 +35,7 @@ class ExamAccessToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('exam', 'student')
+        unique_together = ("exam", "student")
 
     def __str__(self):
         return f"Exam name: {self.exam.title}, student: {self.student.username}"
