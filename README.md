@@ -54,10 +54,16 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Environment Setup
+### 4. Generate Django Secret Key
+First, generate a new secret key by running this command **in your terminal/command prompt**:
+```bash
+python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+### 5. Environment Setup
 Create a `.env` file in the `exam_system/` directory:
 ```env
-SECRET_KEY='django-insecure-*i1z@3kdh_6x&&hk)i)7#b=8bj3ocpc66qmv2mfx*gh)p0t*2('
+SECRET_KEY='your-generated-secret-key-here'
 DEBUG=True
 
 # Email Configuration
@@ -70,29 +76,29 @@ EMAIL_HOST_PASSWORD=your-app-password
 DEFAULT_FROM_EMAIL=your-email@gmail.com
 ```
 
-### 5. Database Setup
+### 6. Database Setup
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 6. Create Superuser
+### 7. Create Superuser
 ```bash
 python manage.py createsuperuser
 ```
 
-### 7. Start Redis Server
+### 8. Start Redis Server
 ```bash
 # Install Redis first, then:
 redis-server
 ```
 
-### 8. Start Celery Worker
+### 9. Start Celery Worker
 ```bash
 celery -A exam_system worker -l info
 ```
 
-### 9. Run Development Server
+### 10. Run Development Server
 ```bash
 python manage.py runserver
 ```
