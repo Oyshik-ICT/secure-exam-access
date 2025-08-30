@@ -337,13 +337,6 @@ The system provides comprehensive error handling with specific HTTP status codes
 - **500 Internal Server Error**: Unexpected server errors
 
 
-### Testing Steps:
-1. **Register**: Create student and instructor accounts
-2. **Login**: Get JWT tokens for authentication
-3. **Create Exam**: Use Django admin to create exam
-4. **Generate Token**: Use instructor credentials to generate student token
-5. **Access Exam**: Use generated token to access exam (public endpoint)
-
 
 ## ⚙️ Configuration Details
 
